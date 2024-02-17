@@ -1,0 +1,110 @@
+
+
+SHELL SCRIPTING ::
+
+- Linux terminal, Command promot is used to interact with OS.
+
+- When an Script runs, It actually opens an child terminal.
+
+- " !/bin/bash " is known as Shebang, It is mandatory in all shell scripts to have Shebang, It indicates bash terminal in child terminal.
+
+- 1st need to ensure script has execute permissions, If not provide them using " chmod +x <file_name> "
+
+- Executing Shell script:
+
+	- The $PATH variable is an environment variable containing an ordered list of paths that Linux will search for executables when running a command.
+	  When running an script, If we add the scripts path then we can run the script as an executable by just giving scripts name.
+	  
+	- If the script doesn't have Shebang, we can run it by prefixing " sh " or " bash " <script_name>.
+	  And while using " bash ", we dont even need exec permissions (chmod -x <file_name>). *****
+	  
+	- . ./<file_name>.sh			[CHECK BELOW]
+
+- Variables :
+	
+	  Local variables :
+	- variable_name = value -> string value -> "    "
+						    -> simply numeric
+						  
+	- $variable_name -> it replaces it with variable_name's value
+	
+	- Types of variable :
+		- Local variables - It will be available only when script runs and It will change for each time the variable value is defined with the script.
+		- Environmental variables - export variable_name = value -> string value -> "    "
+						                                         -> simply numeric
+			1] Environmental variable set in the parent shell can be used in the child shell, But whereas Environmental variable set in the child shell can't be
+			   used in the parent shell.
+			   (eg): - Environmental variable set in a script becomes parent and if we can call a 2nd script it is child.Hence, we can use Environmental variable
+						from parent into child.
+					 - We can also set Environmental variable in linux shell (Parent) and use in scripts (Child).
+					 - But, we cant set Environmental variable in script (child) and use them in linux shell (Parent).
+					 
+					 - [FROM ABOVE]
+						-  . ./<file_name>.sh - By running a script like this script gets executed in the unix terminal itself, No child terminal is created 
+						   as a result. (By this way, we can set environment variable within a script(child) in linux shell (parent))
+						   
+		- Special variables : ....... view Image and  refer Video frm """""DevOpsLearnEasy"""""
+		
+- We can pass arguments while running a script. (eg) : <script_name>.sh <arg1> <aeg2> ...  *********
+						
+- Negation : " \ " is called negation it is used to print any type of variables as their calling name, usually when we call them we get their values.
+			So, Negation is to call them or make them as an ordinary name.
+			(eg) : \$variable_name -> $variable_name
+					$variable_name -> <It's value>
+
+- Shell Script Debugging :
+	
+	set -vx : v stangs for vergos , x stands for Debugging
+	By using 'set -vx' inside script, we get detailed info's on commands executed within the script.
+	
+- Basic operators : ....... view Image and  refer Video frm """""DevOpsLearnEasy"""""
+
+					- File Operator : -r $file -> checks if file has read permission for user
+									  -w $file -> checks if file has write permission for user
+									  -x $file -> checks if file has exec permission for user
+									  -f $file -> checks if file is an proper file or some other link
+									  -d $file -> checks if a directory or file is available
+									  -s $file -> checks wheather file is empty or not
+									  -e $file -> checks for the presence of file
+									  
+					- Boolean operators : -a -> AND operator for conditions
+										  -o -> OR operator for conditions
+										  
+- Loops :
+	
+	- While -> ....
+	- Until -> (More like Do while) ....
+	- For loop --> ....
+	
+- Functions :
+
+- read -> read input from terminal (scanf)
+  echo -> print output to terminal (printf)
+  
+- Shell redirections :
+
+	>		--> writing the terminal output
+	>>		--> appending the terminal output
+	2>		--> writing the error from terminal
+	1		--> Console\terminal output
+	
+	nohup <script_name>.sh 2>&1 & 	--> last & means run background
+										nohup writes the results in nohup file
+										2>&1 writes the error and console output to the file
+										
+- capturing output :
+	
+	- <variable_name> = `ls | wc -l`
+	- <variable_name> = $(ls | wc -l)
+	
+	
+	
+`` --> Is called Bacticks
+	
+
+
+
+
+
+
+
