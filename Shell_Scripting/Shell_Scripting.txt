@@ -44,6 +44,7 @@ SHELL SCRIPTING ::
 						   as a result. (By this way, we can set environment variable within a script(child) in linux shell (parent))
 						   
 		- Special variables : ....... view Image and  refer Video frm """""DevOpsLearnEasy"""""
+			- $@ --> prints all the arguments passed
 		
 - We can pass arguments while running a script. (eg) : <script_name>.sh <arg1> <aeg2> ...  *********
 						
