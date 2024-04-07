@@ -1,0 +1,35 @@
+
+K8 - IQ ::
+
+LogicOps - 45 :
+
+1] How do u ensure high availability and scalability in k8 cluster ?
+--> 1] having 2 availability zones while designing aws infrastructure
+	2] ASG
+	
+2] Updating nodes in EKS cluster without causing downtime
+
+3] Monitoring and logging wrt k8's cluster
+
+4] AWS cloud watch - integration
+
+5] IM roles in EKS fr access control
+
+6] Integrate Amazon EKS with cicd pipeline
+
+7] Scenario - We have containarized application which need to be deployed in eks using any integrated cicd pipeline, how do we do that ?
+
+8] Setting eks cluster fr a new client, what all networking considerations we use ?
+
+9] when we have eks cluster, we have external resources, services. How can an application in cluster access those service/resources.
+
+10] Have u done, Cost optimization to eks clusters ?
+
+11] Rollback strategies in eks ?
+
+12] multicluster management ?
+
+13] pod to pod communication within a cluster ?
+
+14] custom networking configuration for eks cluster ?
+

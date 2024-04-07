@@ -1,0 +1,73 @@
+
+
+pipeline {
+    agent { label 'slave1' }
+
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                echo 'Perform SCM Checkout'
+				git 'https://github.com/LoksaiETA/Java-mvn-app2.git'     --> using git plugin
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Perform Maven Build'
+				sh "mvn -Dmaven.test.failure.ignore=true clean package"    --> ignore error (only in learning, not on realtime - we need to cspture results)
+            }                                                              ---> goals, -->shell sh (maven is runned as sh, not plugin)
+        }
+        stage('Deploy to QA') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+}
+
+
+pipeline {                                                  		
+	agent { label 'Slave1' }                                 		
+
+	stages {                                                 		
+		stage('SCM Checkout') {                              		
+			steps {                                          		
+				echo 'Hello World'
+			}
+		}
+		stage('Build') {									 		
+			steps {
+				echo 'Hello World'
+			}
+		}
+		stage('Deploy to QA') {                               		
+			steps {
+				echo 'Hello World'
+			}
+		}
+	}
+}	
+
+
+pipeline {
+    agent { label 'Slave1' }
+
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                echo 'Perform SCM Checkout'
+				git 'https://github.com/LoksaiETA/Java-mvn-app2.git'     
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Perform Maven Build'
+				sh "mvn -Dmaven.test.failure.ignore=true clean package"    
+            }
+        }
+        stage('Deploy to QA') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+}
