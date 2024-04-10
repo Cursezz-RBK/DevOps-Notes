@@ -7,6 +7,7 @@ SHELL SCRIPTING ::
 - When an Script runs, It actually opens an child terminal.
 
 - " !/bin/bash " is known as Shebang, It is mandatory in all shell scripts to have Shebang, It indicates bash terminal in child terminal.
+(NOTE : !/bin/sh can also be used as Shebang.)
 
 - 1st need to ensure script has execute permissions, If not provide them using " chmod +x <file_name> "
 
@@ -102,6 +103,16 @@ SHELL SCRIPTING ::
 	
 `` --> Is called Bacticks
 	
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+-] ipcs -> show Inter process communication (semaphores, Shared memory, and Message queues)
+-] ipcrm -> remove Inter process communication (semaphores, Shared memory, and Message queues)
+-] awk '{$print2}' -> prints 2nd column
+-] | -> pipes output frm one command to another
+-] / -> negation
+     -> can be used to start 2nd line as continuation to 1st during scripting.
+     -> home/rajendrb - / directories path representation.
+
 
 
 
