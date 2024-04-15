@@ -1,0 +1,14 @@
+
+
+
+NETWORKING :
+
+-] Network - Computer's connected to eachother
+   Internet - Network connected to eachother
+
+-] Cold war (USA vs Russia) which lead to creation of ARPA project (by USA), which lead to ARPAnet then later to Internet
+
+-] - Protocols ( Global rules created by internet society, for sending differrnt types of items)
+   - WWW (Created for sharing documents, using hyperlinks)
+
+-] 

@@ -1,0 +1,41 @@
+
+
+
+
+AWS - Cloud Formation Template_________
+Azure - Resource manager_______________|
+Openshack - Heat templates_____________|
+......_________________________________|
+                                       |
+                                   Terraform - HCL (HashiCorp Language)
+								   
+1] Terraform act as (API as Code)
+2] We have alternate tool for Terraform, But Terraform is in top.
+3] Hands-On Step by step :
+	1] aws configure 		(Making an connection with our cloud provider)
+	2] terraform init		(Make sure to run this command from the directory where .tf file is present)
+	3] terraform plan		(Dry run -> it tells us what we will create if we proceed)
+	4] terraform apply      (for creation of instance, only if value are correct)
+	5] terraform destroy	(delete the ec2 instance by refering the state file)
+4] Multi-Region & Multi-Providers
+5] Variables and dependent files :
+	Variables
+	Output variables
+	Provider
+	tfvars
+6] 
+
+
+
+
+
+
+
+
+
+github - project - terraform - simple ec2 creation (ami altered + might need to add subnet, tag)
+
+
+
+vpc 
+s3

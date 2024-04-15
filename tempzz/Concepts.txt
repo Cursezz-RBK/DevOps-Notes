@@ -1,0 +1,8 @@
+
+
+Concepts :
+
+-] Inter-process communication (IPC) -
+It is the mechanism through which processes or threads can communicate and exchange data with each other on a computer or across a network.
+IPC is an important aspect of modern operating systems, as it enables different processes to work together and share resources, leading to increased efficiency and flexibility.
+
