@@ -29,6 +29,8 @@ Configuration Management Tool - Ansible :::
 		b] Modules 
 		c] ansible.config 
 		d] Ansible Playbook/Adhoc Commands 
+		e] Ansible engine/ Controller/ Master
+		f] Ansible node/ Slave
 	
 	- Why Ansible ?                  (Make use of Word docu in video)
 		
@@ -44,11 +46,13 @@ Configuration Management Tool - Ansible :::
 			- Application deployment
 			- Security compliance
 
+
+
 	- Working with Ansible ::
 			
 		- Inorder to install Ansible we need "python" in both Master and target nodes (AWS EC2 instances have phython defaultly)
 		
-					
+Linux's default authentication in key value auhenticaion, but there are more...					
 						
 						
 	- Ansible Installation & Configurations ::                                                                  	(2:15:00)
@@ -167,6 +171,7 @@ chown -R devopsadmin:devopsadmin /etc/ansible      ==> power given to devopsadmi
 
 
 
+2:46:00
 
 working starts -->
 
