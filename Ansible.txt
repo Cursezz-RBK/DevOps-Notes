@@ -181,7 +181,8 @@ working starts -->
 		
 			1] Create Inventory :
 			
-				hosts is default inventory file
+				- hosts is default inventory file
+				- dont leave unwanted spaces
 				
 				###update vi etc/ansible/host
 
@@ -296,6 +297,8 @@ Ansible Facts!
 
 ansible samplenode1 -m setup
 ansible samplenode1 -m setup -a "filter=ansible_mounts"
+
+*** By using ansible setup module, we get ansible facts(complete info on hardware details, software details of target node)
 
 
 
@@ -435,7 +438,7 @@ Ansible Playbooks ::
 		- (e.g) : test_var-datatype1.yaml
 		
 		/etc/ansible/variables/myvarfile1.yaml
-																			(As the best partice it is nest to maintain seperate file for variables)
+																			(As the best partice it is best to maintain seperate file for variables)
 		vi myvarfile1.yaml
 		
 		x: 23
