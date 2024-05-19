@@ -25,12 +25,12 @@ Configuration Management Tool - Ansible :::
 	
 	- Ansible Components ::
 		
-		a] Inventory 
+		a] Inventory / Hosts
 		b] Modules 
 		c] ansible.config 
-		d] Ansible Playbook/Adhoc Commands 
-		e] Ansible engine/ Controller/ Master
-		f] Ansible node/ Slave
+		d] Ansible Playbook / Adhoc Commands 
+		e] Ansible engine / Controller / Master
+		f] Ansible node / Slave
 	
 	- Why Ansible ?                  (Make use of Word docu in video)
 		
