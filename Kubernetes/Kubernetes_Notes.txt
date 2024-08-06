@@ -83,13 +83,16 @@ KUBERNETES ARCHITECTURE :
 	b] KUBELET :
 		It is an agent which runs in every worker node. It ensures that containers are running within the pods.
 		It is also responsible for registering a node to a cluster, and sending reports on pod status and resource utilization.
-		It continously looks for any changes in pod configuration file from Api-server and ensures that the pod and containers are running in healthy
+ 		It continously looks for any changes in pod configuration file from Api-server and ensures that the pod and containers are running in healthy
 		desired state.
 		
 	c] KUBE-PROXY :
 		Kube-Proxy is a network proxy that runs on each node in a Kubernetes cluster.
 		It is responsible for maintaining network connectivity between services and pods.
 		Kube-Proxy is the one which creates IP address for new pods.
+		Traffic Routing
+		Service Discovery
+		Load Balancing
 		
 
 KUBERNETES WORKFLOW :
@@ -366,7 +369,7 @@ INGRESS :
 	It is used to establish a secure connection between a web server and a web browser, ensuring that data is transmitted privately and
 	without modifications, loss, or theft.
 	Types or ways for generating TLS certificates :
-	a] Self-Signed Certificates
+	a] Self-Signed Certigficates
 	b] Purchase an SSL Certificate
 	c] Use Let's Encrypt Certificate
 	d] Internal PKI Infrastructure
@@ -457,22 +460,46 @@ Volumes are common directories which can be accessed by all associated pods/cont
 
 1]	Problems solved by Volumes :
 	a] Data loss - When we apply Deployment.yaml or Replicaset.yaml, whenever an pod goes down another is created. But, Datas in old pod gets lost
-	we it goes down, This resulting in Data loss.
+	when it goes down, This resulting in Data loss.
 	b] Data sharing - When replicas of same application is made, the data is stored in containers associated with them, there was no way to share
 	data across pods/containers.
 
 {{ NOTE - Above 2 Issues are observed at container level }}
 	
 2]	Types of Volumes :
-	a] emptyDir Volume - Initially, The Data is stored in Container's directory, Which leads to above Problems.
-	But, emptyDir is an common directory at pod level. Hence, by storing data in it will not result in above Problems.
-	This solves issue at Container level, but above both ptoblem still exist on pod level.
+	a] emptyDir Volume -
+	Initially, The Data is stored in Container level, Which leads to above Problems. But, emptyDir is an common directory at pod level. 
+	Hence, by storing data in it will not result in above Problems. This solves issue at Container level, but above both problem still exist on pod
+	level.
+	b] Hostpath -
+	This method resolves above problems at pod level, It stores data in a common path of pods in node. But, Sharing data between pods of
+	different nodes and avoiding data lose during node restart is not possible.
+	c] Persistent volume -
+	Above both volumes are ephemeral volumes ( They get deleted when a pod or node goes down ), But Persistent volume is non-ephemeral.
+	i.e, Here the volume is stored in external storages ( EBS, EFS, etc,. )
+	Kubernetes Persistent Volumes (PVs) are a way to provide durable storage to Kubernetes applications.
+	PVs are cluster resources that exist independently of any individual Pod, allowing data to persist even when Pods are deleted.
+	1]	Components of Persistent volume :
+		a] Persistent volumes - Here we specify the capacity, access mode, path for pv's.
+		b] Persistent volume claims - Here we also specify the capacity, access mode same as pv.yaml, for the purpose of matching it.
+		we use pvc in deployment.yaml instead of pv for various reasons such as portability, dynamic provisioning, etc,.
+		c] Storage classes - We use it in order to create pv's dynamically. Storage classes are defined in pvc.yaml files.
+		
+{{ NOTE - Persistent volumes, Storage classes are available for entier cluster, where as pvc is available at namespace levels }}
+		
+{{ NOTE - deployment ( container details, pvc details ) -> pvc ( pv details, storage class details ) }}
+		
+	2]	Access modes ( pv.yaml component ):
+		a] ReadWriteMany - Read and Write can be performed by many nodes, This is best option when we have multi nodes for accessing the volumes
+		b] ReadWriteOnce - Read and Write can be performed by single node, This is best option when we have a single node for accessing the volumes
+		C] ReadOnlyMany - Only Read can be performed by many nodes, This is best option when we have multi nodes for accessing the volumes
+		d] ReadOnlyOnce - Only Read can be performed by single node, This is best option when we have a single node for accessing the volumes
+		e] ReadWriteOncePod - Read and Write can be performed by single pod in a node
+		
+{{ NOTE - When we say Container level - Volumes are directories which created in pods and remains till container stays alive,
+		  Pod level - Volumes are created at nodes, and the volumes remain till pod stays alive }}
 	
-	
-	
-
-	
-2] 	Commands used :
+3] 	Commands used :
 	kubectl apply -f Deployment.yaml
 		-> From Volumes directory
 	kubectl get po
@@ -480,7 +507,7 @@ Volumes are common directories which can be accessed by all associated pods/cont
 	
 	In Mongo Composs -> Creation of data
 	
-	kubectl exec -it mongo-78474469b4-rvjl9 -- /bin/bash			-> Entering pod, which doesn't work fr us
+	kubectl exec -it mongo-78474469b4-rvjl9 -- /bin/bash			-> Entering pod, which work in VS but not in GIT bash
 		-> By killing a process inside container we can observe above 2 mentioned problems.
 	kubectl apply -f Deployment.yaml
 		-> Added " volumeMounts:
@@ -500,11 +527,202 @@ Volumes are common directories which can be accessed by all associated pods/cont
 	
 	minikube ssh													-> Command allows users to access the Minikube environment for debugging purposes.
 	sudo ls /var/lib/kubelet/pods									-> This directory is were emptyDir volume is stored (At Node)
+	kubectl delete po <pod_name>
+		-> Reported problems occur at Pod level, i.e - pod gets recreated due to replicaset, but data is lost.
+	
+	kubectl api-resources | grep Persistent
+	
+{{ NOTE - Deletion of pvc and pv gets stuck in terminating state when that pvc and pv is used by pods,
+          In order to resolve it we must delete pod attached }}
+
+	kubectl apply -f .\pv-1.yaml
+	kubectl get pv
+		-> Status = Active
+	kubectl apply -f .\pvc-1.yaml
+	kubectl get pvc
+	kubectl get pv
+		-> Status = Bound
+	kubectl apply -f .\Deployment-4.yaml
+		-> Container not gets created, since pv path not exist
+	minikube -p JEKS ssh
+		-> mkdir /storage/data
+	kubectl get all
+	kubectl delete deployment mongo
+	kubectl delete pvc mongo-pvc-sc										-> Resources are deleted to remove pv
+	kubectl delete pv mongo-pvc-sc
+		-> Status = Retain 												-> Status = Retain, when assigned pvc is deleted
+	kubectl apply -f .\pv-1.yaml
+	kubectl apply -f .\pvc-1.yaml
+	kubectl apply -f .\Deployment-1.yaml
+	kubectl get all
+	kubectl port-forward svc/mongo-svc 32000:27017
+	kubectl apply -f sc-1.yaml
+	kubectl get sc
+	
+
+STATEFULSETS :
+------------
+1] 	Stateful vs Stateless :
+	Stateful applications maintain information about the state or condition of a user's interaction over time,
+	while stateless applications do not retain any information about previous interactions.
+
+2]	Problems faced :
+	a] When we want an depoyment with persistant volume attached to be in highly available, we increase replicaset, Due to sharing same
+	Persistent volume between replicas, It causes data in-consistent.
+	-> This can be resolved by having different Persistent volumes for different replicas.
+	
+	b] 
+
+]	Important commands :
 	
 	
+CONFIGMAPS & SECRETS :
+--------------------
+
+There are 3 different ways to configure a data :
+a]	Passing as arguments
+b]	Configuration files (ConfigMaps & Secrets)
+c]	Environment variables
+
+Whenever we develop any application we should not code the properties which change gfor each environment, Instead we should configure those properties.
+So, that we don't need to rebuild the image whenever these values changes, All we do is just pause those values from outside that way we can reuse
+the same image for different environments like Dev, QA, Staging and Production and the method is ConfigMaps & Secrets.
+
+{{ NOTE - ConfigMaps & Secrets are special type of Volumes }}
+
+a]	CONFIGMAPS :
+	Config map is a kubernetes object that lets you store configurations, Which can be used in different applications.
+
+{{ NOTE - ConfigMap and the Pods use them must be in same Namespace }}
+
+b]	SECRETS :
+	Password is a confidential data and there might be other confidential information like API keys and certificates which we don't want everyone to
+	see to configure such confidential data, Kubernetes provides another type of volume for it called Secrets. Config maps and Secrets are almost
+	same in terms of how we create them and use them the only difference is that secrets are secured the data of the secrets can be encrypted
+	in hcd database.
+
+b]	YAML contents :
+	data : 					- Instead of spec which has container details, we use data : to store username/password
+	immutable :				- By keeping this true, we will not be able to update ConfigMap files, instead we can only delete and re-create
+	valueFrom :
+		configMapKeyRef :
+			key :
+			name :			- These sections are added inorder to access data from ConfigMap.yaml
+	valueFrom :
+		secretKeyRef :
+			key :
+			name :			- These sections are added inorder to access data from secret.yaml
+		
+c]	IMPORTANT COMMANDS :
+	kubectl api-resources | grep ConfigMap		
+	echo -n <password> | base64						- Password stored in secrets.yaml should me in the form of base64,
+													  hence we use this command to convert it.
+
+
+PROBES :
+------
+
+Any application can be in an analogy state due to various reasons like
+	a] Bugs in the code
+	b] Timeouts while communicating with an external service
+	c] DB connection failures
+	d] Out of memory issues
+	e] etc.,.
+In all these situation the Pod will look like it's running from the outside but internal functionality is broken because of these bugs and
+users won't be able to access the application in all these cases, We expect the container to restart but kubernetes doesn't restart because
+by default kubernetes just checks the contains main process and decides if the container is Healthy or not it doesn't check the internal functionality
+of our application only if the main process crashes kubelet will restart the container. If we don't heal these unhealthy pods our service becomes
+unstable, debugging such Parts is also tricky as the Pod status shows running but we don't get the expected output in our ports we deployed.
+So, far mongodb is the main process as long as the mongodb process is running, kubernetes just to treats the pod as healthy no matter if the internal
+functionality is working correctly or not.
+Inorder to resolve this issue we have Probes. Basically, we are customizing the behavior of kubernetes to check if a container is healthy or not.
+
+{{ NOTE - Probes are at Container level, not Node level }}
+
+	1] TYPES OF PROBES :
 	
+		a] Liveness probe - With Liveness probe we can instruct kubernetes on how to detect whether a pod is alive or not. In other words,
+		healthy or not by the use of commands or network requests inside the container. If the liveness probe command gives the exit code = 1
+		which indicates failure and kubernetes assumes the Pod is an Unhealthy and kubelet restarts the pod.
+		In short, liveness probe ensures we always have Healthy pods available.
+		
+		+] PROBE MECHANISUM :
+		
+			a] Command Execution - 
+				Probe -
+					exec :
+						command :
+							- mongo
+							- --eval
+							- "db.adminCommand"('ping')"
+				Success - 0 (exit code)
+				Failure - 1 (exit code)
+				
+			b] Network response (HTTP) -
+				Probe -
+					httpGet:
+						path: /health
+						port: 8080
+				Success - http response in 200-399
+				Failure - http response in Other than 200-399
+				
+			c] TCP -
+				Probe -
+					tcpSocket :
+					port : 8080
+				Success - If port accepts traffic
+				Failure - If port can't accepts traffic
+		
+		+] PROBE CUSTOMIZATION :
+		
+			a] initialDelaySeconds		- Delay to run the probe initially 
+			b] periodSeconds			- How frequent the probe should execute after initial delay
+			c] timeoutSeconds			- Timeout period to mark as failure
+			d] failure/SuccessThreshod	- How many times to retry in case of failure
 	
-	
+		b] Readiness probe - Readiness probe identifies when a container can handle external traffic received from a service, just like
+		liveness probe we can run Readiness probe and if the Readiness probe fails then kubernetes removes the IP address of the Pod
+		from the endpoints of all services it belongs to and when the Pod is not part of the service the Pod will not get any traffic.
+		Probe is very helpful to instruct kubernetes that a running container should not receive any traffic until it is ready this way
+		we can increase our success response rate.
+		Difference between liveness probe and Readiness probe is when a liveness probe is failed the Pod is restarted whereas when Readiness probe
+		fails the Pod is not restarted but it will be removed from the endpoint list of the service so that it will not receive any traffic and
+		once the Readiness probe succeeds the Pod is added back to the service and it gets the usual traffic.
+		
+		c] Startup probe - Startup probe provides a way to delay the execution of liveness probe and Readiness probe until a container indicates
+		it's able to handle them meaning liveness and Readiness probes are executed only if the startup probe succeeds.
+		If a container fails its startup probe then the container is killed and follows the port's restart policy. We can set the restart policy
+		in the port spec this defines when the port should get restarted.
+		Restart policy values :
+			+] always ( Default value ) - No matter how the Pod is exited it should always restart the pods.
+			+] on failure - Pod should get restarted only if it exits with a non-zero status
+			+] never - no matter what how the Pod exits it should never restart.
+
+
+RESOURCE MANAGEMENT :
+-------------------
+
+
+AUTO-SCHEDULING :
+---------------
+
+In real time we will have so many nodes in the kubernetes cluster and when we create a pod kubernetes scheduler filters the nodes that can run
+this pod and then it runs a set of functions to score the node fesaibility from 1 to 10. And finally it picks a node with the highest score
+and updates the node name onto the pod. Kubernetes scheduler considers our pod resource requirements and other customizations defined by us while
+scheduling the port.
+However kubernetes schedules the deleted pod onto a different node when we use deployments or stateful sets but there may be cases,
+Where we want to deploy our pod onto specific nodes.
+
+There are different ways in which we can instruct kubernetes to schedule our pods onto specific nodes,
+a] nodeName - Instructing kubernetes to deploy all our deployment, replicas onto a specific node
+b] nodeSelector - 
+
+
+1] 	COMMANDS :
+	kubectl get pods
+	kubectl label node <nodename> team=analytics			-> Adding a label to a node
+	kubectl get nodes --show-labels							-> Shows all labels of all nodes
+	kubectl get nodes -l team=analytics						-> 
 	
 	
 	
@@ -605,6 +823,28 @@ helm install todo-api .											-> To build our required application
 ............s
 	
 	
+ aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+	
+	
+ eksctl create iamserviceaccount \
+  --cluster=demo-eks-roboshop \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --role-name AmazonEKSLoadBalancerControllerRole \
+  --attach-policy-arn=arn:aws:iam::730335525212:policy/AWSLoadBalancerControllerIAMPolicy \
+  --approve
+
+vpc-03f496672198de46d
+vpc-0e2023374d1a7e034
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=demo-eks-roboshop --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller --set region=us-east-1 --set vpcId=vpc-0e2023374d1a7e034
+
+
+---------------------------------------------------
+HELM :
+----
 	
 	
 
